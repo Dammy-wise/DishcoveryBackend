@@ -1,0 +1,148 @@
+{
+  "info": {
+    "name": "Dishcovery API",
+    "_postman_id": "dscv-2025-capstone",
+    "description": "Full API for Dishcovery Project (Auth, Recipes, Favorites, Admin)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    
+    {
+      "name": "AUTH",
+      "item": [
+        {
+          "name": "Signup",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"pass1234\"\n}"
+            },
+            "url": "{{base_url}}/api/auth/signup"
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"pass1234\"\n}"
+            },
+            "url": "{{base_url}}/api/auth/login"
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "RECIPES",
+      "item": [
+        {
+          "name": "Get All Recipes",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/recipes"
+          }
+        },
+        {
+          "name": "Get Recipe by ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/recipes/1"
+          }
+        },
+        {
+          "name": "Create Recipe",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "name", "value": "Jollof Rice", "type": "text" },
+                { "key": "category", "value": "Nigerian", "type": "text" },
+                { "key": "cookingTime", "value": "35", "type": "text" },
+                { "key": "prepTime", "value": "10", "type": "text" },
+                { "key": "rating", "value": "5", "type": "text" },
+                { "key": "description", "value": "Classic Jollof Rice", "type": "text" },
+                {
+                  "key": "ingredients",
+                  "value": "[\"rice\",\"tomato\",\"pepper\"]",
+                  "type": "text"
+                },
+                {
+                  "key": "instructions",
+                  "value": "[\"Boil rice\",\"Cook sauce\"]",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": ["/path/to/image.jpg"]
+                }
+              ]
+            },
+            "url": "{{base_url}}/api/recipes"
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Favorites",
+      "item": [
+        {
+          "name": "Toggle Favorite",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base_url}}/api/favorites/1/toggle"
+          }
+        },
+        {
+          "name": "Get User Favorites",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base_url}}/api/favorites"
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "List All Users",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/users"
+          }
+        },
+        {
+          "name": "Make User Admin",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/users/1/make-admin"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "base_url", "value": "https://dishcovery-backend-1.onrender.com" },
+    { "key": "token", "value": "" }
+  ]
+}

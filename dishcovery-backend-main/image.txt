@@ -1,0 +1,51 @@
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823979/amala_and_gbegiri_lkovb8.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823971/akara_nbr7lz.avif
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823968/afang_soup_and_efo_riro_xsofyc.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823968/white_soup_iay2xl.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823967/Tuwo_shinkafa_ahc87v.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823957/suya_skewer_ivnwgh.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823957/sushi_platter_m3f1pf.webp
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823958/Tacos_v1eiam.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823956/spagetti_bolognese_b3vmjj.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823943/punded_yam_and_efo_riro_pwdm3f.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823943/shakshuka_bptjz5.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823943/plantain_and_beans_qdaagg.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823936/pepper_soup_s8xzed.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823932/pad_thai_ztclfh.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823932/paella_vvdd9j.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823931/okra_soup_ertvjv.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823923/Ogbono_soup_n2oqs6.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823923/nigerian_suya_delux_kjrnud.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823923/nkwobi_drqetn.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823922/moi_moi_tz2ox0.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823916/jollof_spaghetti_yjhrga.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823916/italian_carbonara_vle8tk.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823915/fried_rice_myd71z.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823912/Egusi_nqs33r.webp
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823911/buttter_chicken_d4ppcd.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823910/boli_rosted_plantain_ykuvqm.webp
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823909/beef_burguignon_l19ppr.jpg
+https://res.cloudinary.com/dguseowoa/image/upload/v1762823905/banga_iihhsv.webp
+
+
+
+/controllers
+  recipeController.js        <-- REPLACE (full)
+  userController.js          <-- NEW
+  favoriteController.js      <-- NEW
+/models
+  User.js                    <-- REPLACE (adds role)
+  Recipe.js                  <-- KEEP (you already have)
+  Favorite.js                <-- NEW
+  index.js                   <-- REPLACE (associations + export)
+/routes
+  recipeRoutes.js            <-- REPLACE (adds search, update, delete)
+  userRoutes.js              <-- NEW (admin user management)
+  favoriteRoutes.js          <-- NEW
+/middleware
+  authMiddleware.js          <-- REPLACE (ensures req.user)
+  adminMiddleware.js         <-- NEW (admin check)
+/utils
+  cloudinary.js              <-- KEEP (you have it)
+/server.js                    <-- REPLACE (register new routes & sync)
+README.md                     <-- (you already have; optional update)
