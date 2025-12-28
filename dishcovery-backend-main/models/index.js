@@ -23,7 +23,6 @@ Favorite.belongsTo(Recipe, { foreignKey: "recipeId" });
 
 // ✅ TEMP: update DB structure
 sequelize
-  .sync({ alter: true })
   .then(() => console.log("✅ DB updated with Favorite model"))
   .catch((err) => console.error("❌ DB sync error:", err));
 

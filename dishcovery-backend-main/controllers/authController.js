@@ -25,6 +25,24 @@ export const signup = async (req, res) => {
       return res.status(400).json({ error: "Email already exists" });
     }
 
+
+   // Validate input first
+if (!firstName || !lastName || !email || !password) {
+  return res.status(400).json({ 
+    error: "All fields are required" 
+  });
+}
+
+if (password.length < 6) {
+  return res.status(400).json({ 
+    error: "Password must be at least 6 characters" 
+  });
+}
+
+// Then create user...
+
+
+
     // Create user
     const user = await User.create({
       firstName,
