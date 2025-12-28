@@ -23,10 +23,24 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // CORS configuration
+const allowedOrigins = process.env.NODE_ENV === 'production' 
+  ? ['https://your-frontend-domain.com', 'https://your-frontend-domain.vercel.app']
+  : ['http://localhost:3000', 'http://localhost:5173'];
+
 app.use(cors({
-  origin: "*", // In production, replace with your frontend URL
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
 }));
 
 // Body parsing middleware
@@ -84,11 +98,11 @@ const startServer = async () => {
 
     // Sync models (use alter: true only in development)
     console.log("🔄 Syncing database models...");
-    await sequelize.sync({ 
-      alter: process.env.NODE_ENV === 'development',
-      force: false 
-    });
-    console.log("✅ Database models synced");
+await sequelize.sync({ 
+  alter: process.env.NODE_ENV === 'development', // Only alter schema in dev
+  force: false // NEVER use force: true in production
+});
+console.log("✅ Database models synced");
 
     // Start server
     app.listen(PORT, '0.0.0.0', () => {
