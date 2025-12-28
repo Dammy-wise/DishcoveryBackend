@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 // ✅ Generate JWT
 const generateToken = (user) => {
   return jwt.sign(
-    { id: user.id, email: user.email },
+    { id: user.id, email: user.email, role: user.role },
     process.env.JWT_SECRET,
     { expiresIn: "7d" }
   );
@@ -15,8 +15,13 @@ export const signup = async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
 
+    // Validate input
     if (!firstName || !lastName || !email || !password) {
       return res.status(400).json({ error: "All fields are required" });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ error: "Password must be at least 6 characters" });
     }
 
     // Check duplicate email
@@ -49,6 +54,7 @@ if (password.length < 6) {
       lastName,
       email,
       password,
+      role: "user" // Explicitly set role
     });
 
     const token = generateToken(user);
@@ -58,14 +64,18 @@ if (password.length < 6) {
       token,
       user: {
         id: user.id,
-        firstName,
-        lastName,
-        email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role
       },
     });
   } catch (error) {
-    console.error("Signup Error:", error);
-    return res.status(500).json({ error: "Server error" });
+    console.error("❌ Signup Error:", error);
+    return res.status(500).json({ 
+      error: "Server error during signup",
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
@@ -74,20 +84,22 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password)
+    // Validate input
+    if (!email || !password) {
       return res.status(400).json({ error: "Email and password required" });
+    }
 
     // Check if user exists
     const user = await User.findOne({ where: { email } });
-
-    if (!user)
+    if (!user) {
       return res.status(404).json({ error: "User not found" });
+    }
 
     // Validate password
-    const valid = await user.validatePassword(password);
-
-    if (!valid)
+    const isValid = await user.validatePassword(password);
+    if (!isValid) {
       return res.status(400).json({ error: "Invalid password" });
+    }
 
     const token = generateToken(user);
 
@@ -98,11 +110,15 @@ export const login = async (req, res) => {
         id: user.id,
         firstName: user.firstName,
         lastName: user.lastName,
-        email,
+        email: user.email,
+        role: user.role
       },
     });
   } catch (error) {
-    console.error("Login Error:", error);
-    return res.status(500).json({ error: "Server error" });
+    console.error("❌ Login Error:", error);
+    return res.status(500).json({ 
+      error: "Server error during login",
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };

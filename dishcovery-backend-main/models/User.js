@@ -26,7 +26,7 @@ export default (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      // ✅ ADD ROLE FIELD
+      // ✅ ADD THIS FIELD - THIS IS THE MAIN FIX!
       role: {
         type: DataTypes.STRING,
         defaultValue: "user",
@@ -43,7 +43,7 @@ export default (sequelize) => {
     }
   });
 
-  // Hash password before updating if it changed
+  // Hash password before updating user
   User.beforeUpdate(async (user) => {
     if (user.changed('password')) {
       user.password = await bcrypt.hash(user.password, 10);

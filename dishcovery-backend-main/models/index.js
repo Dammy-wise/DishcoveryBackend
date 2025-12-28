@@ -10,20 +10,22 @@ export const Recipe = RecipeModel(sequelize);
 export const Favorite = FavoriteModel(sequelize);
 
 // ✅ Setup relationships
-User.hasMany(Recipe, { foreignKey: "userId" });
+User.hasMany(Recipe, { foreignKey: "userId", onDelete: "CASCADE" });
 Recipe.belongsTo(User, { foreignKey: "userId" });
 
-// ✅ A user can favorite many recipes
 User.hasMany(Favorite, { foreignKey: "userId", onDelete: "CASCADE" });
 Favorite.belongsTo(User, { foreignKey: "userId" });
 
-// ✅ A recipe can be favorited many times
 Recipe.hasMany(Favorite, { foreignKey: "recipeId", onDelete: "CASCADE" });
 Favorite.belongsTo(Recipe, { foreignKey: "recipeId" });
 
+<<<<<<< HEAD
+// ❌ REMOVED: Don't sync here, do it in server.js only
+=======
 // ✅ TEMP: update DB structure
 sequelize
   .then(() => console.log("✅ DB updated with Favorite model"))
   .catch((err) => console.error("❌ DB sync error:", err));
+>>>>>>> 94151f6a66c508549eb2e4143245477c0ed5222e
 
 export default sequelize;

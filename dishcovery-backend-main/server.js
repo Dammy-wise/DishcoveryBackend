@@ -1,4 +1,3 @@
-// dishcovery-backend-main/server.js
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -8,58 +7,47 @@ import userRoutes from "./routes/userRoutes.js";
 import favoriteRoutes from "./routes/favoriteRoutes.js";
 import sequelize from "./models/index.js";
 
+// Load environment variables
 dotenv.config();
-const app = express();
 
-// ✅ Better CORS configuration
+// Validate required environment variables
+const requiredEnvVars = ['DB_URL', 'JWT_SECRET', 'CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET'];
+const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingEnvVars.length > 0) {
+  console.error(`❌ Missing required environment variables: ${missingEnvVars.join(', ')}`);
+  process.exit(1);
+}
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// CORS configuration
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:3000",
-  credentials: true,
+  origin: "*", // In production, replace with your frontend URL
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-// ✅ Add body parsers BEFORE routes
+// Body parsing middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ Request logging middleware (helps debug)
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
-  console.log('Body:', req.body);
-  next();
-});
-
-// ✅ Sync database
-// Remove auto-sync from models/index.js
-// Only sync in server.js with proper error handling
-
-// In server.js:
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log("✅ Database connected");
-    return sequelize.sync({ alter: false }); // Don't alter in production
-  })
-  .then(() => console.log("✅ Database synced"))
-  .catch((err) => {
-    console.error("❌ Database error:", err);
-    process.exit(1);
-  });
-
-// ✅ Routes
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/recipes", recipeRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/favorites", favoriteRoutes);
 
-// ✅ Root route
+// Health check endpoint
 app.get("/", (req, res) => {
   res.json({ 
-    message: "Dishcovery API Running",
+    message: "🍽️ Dishcovery API Running",
     version: "1.0.0",
+    status: "healthy",
+    timestamp: new Date().toISOString(),
     endpoints: {
-      auth: "/api/auth",
+      auth: "/api/auth (signup, login)",
       recipes: "/api/recipes",
       users: "/api/users",
       favorites: "/api/favorites"
@@ -67,31 +55,58 @@ app.get("/", (req, res) => {
   });
 });
 
-// ✅ Health check endpoint
-app.get("/health", (req, res) => {
-  res.json({ status: "ok", timestamp: new Date().toISOString() });
-});
-
-// ✅ 404 handler
+// 404 handler
 app.use((req, res) => {
   res.status(404).json({ 
-    error: "Not Found",
-    message: `Cannot ${req.method} ${req.path}` 
+    error: "Route not found",
+    path: req.path,
+    method: req.method
   });
 });
 
-// ✅ Error handler
+// Global error handler
 app.use((err, req, res, next) => {
-  console.error("Error:", err);
+  console.error("❌ Error:", err);
   res.status(err.status || 500).json({ 
     error: err.message || "Internal Server Error",
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+    details: process.env.NODE_ENV === 'development' ? err.stack : undefined
   });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📍 API URL: http://localhost:${PORT}`);
-  console.log(`🔗 Render URL: ${process.env.RENDER_EXTERNAL_URL || 'Not set'}`);
+// Database connection and server startup
+const startServer = async () => {
+  try {
+    console.log("🔄 Connecting to database...");
+    
+    // Test database connection
+    await sequelize.authenticate();
+    console.log("✅ Database connected successfully");
+
+    // Sync models (use alter: true only in development)
+    console.log("🔄 Syncing database models...");
+    await sequelize.sync({ 
+      alter: process.env.NODE_ENV === 'development',
+      force: false 
+    });
+    console.log("✅ Database models synced");
+
+    // Start server
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`📍 Local: http://localhost:${PORT}`);
+      console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    });
+  } catch (error) {
+    console.error("❌ Failed to start server:", error);
+    console.error("Error details:", error.message);
+    process.exit(1);
+  }
+};
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+  console.error('❌ Unhandled Promise Rejection:', err);
 });
+
+// Start the server
+startServer();
