@@ -1,6 +1,6 @@
 // /controllers/userController.js
 import { User } from "../models/index.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 // List all users (admin)
 export const listUsers = async (req, res) => {
