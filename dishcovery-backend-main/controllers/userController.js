@@ -1,10 +1,8 @@
 // controllers/userController.js
-// ✅ Complete user management controller
+// ✅ Fixed with correct import paths
 
 import bcrypt from "bcryptjs";
-import User from "../models/User.js";
-import Recipe from "../models/Recipe.js";
-import Favorite from "../models/Favorite.js";
+import { User, Recipe, Favorite } from "../models/index.js";
 import { uploadToCloudinary } from "../config/cloudinary.js";
 
 // ============================================

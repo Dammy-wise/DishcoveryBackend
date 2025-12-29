@@ -1,8 +1,7 @@
 // controllers/recipeController.js
-// ✅ Complete recipe controller with Cloudinary integration
+// ✅ Fixed with correct import paths
 
-import Recipe from "../models/Recipe.js";
-import User from "../models/User.js";
+import { Recipe, User } from "../models/index.js";
 import { uploadToCloudinary } from "../config/cloudinary.js";
 
 // ============================================

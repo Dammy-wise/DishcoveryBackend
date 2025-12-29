@@ -1,5 +1,5 @@
+// models/index.js - Fixed with proper associations
 import sequelize from "../config/database.js";
-
 import UserModel from "./User.js";
 import RecipeModel from "./Recipe.js";
 import FavoriteModel from "./favorite.js";
@@ -9,16 +9,40 @@ export const User = UserModel(sequelize);
 export const Recipe = RecipeModel(sequelize);
 export const Favorite = FavoriteModel(sequelize);
 
-// ✅ Setup relationships
-User.hasMany(Recipe, { foreignKey: "userId", onDelete: "CASCADE" });
-Recipe.belongsTo(User, { foreignKey: "userId" });
+// ✅ Setup relationships with proper aliases
+User.hasMany(Recipe, { 
+  foreignKey: "userId", 
+  as: "recipes",
+  onDelete: "CASCADE" 
+});
 
-User.hasMany(Favorite, { foreignKey: "userId", onDelete: "CASCADE" });
-Favorite.belongsTo(User, { foreignKey: "userId" });
+Recipe.belongsTo(User, { 
+  foreignKey: "userId",
+  as: "user"
+});
 
-Recipe.hasMany(Favorite, { foreignKey: "recipeId", onDelete: "CASCADE" });
-Favorite.belongsTo(Recipe, { foreignKey: "recipeId" });
+User.hasMany(Favorite, { 
+  foreignKey: "userId",
+  as: "favorites",
+  onDelete: "CASCADE" 
+});
 
-// ❌ REMOVED: Don't sync here, do it in server.js only
+Favorite.belongsTo(User, { 
+  foreignKey: "userId",
+  as: "user"
+});
+
+Recipe.hasMany(Favorite, { 
+  foreignKey: "recipeId",
+  as: "favorites",
+  onDelete: "CASCADE" 
+});
+
+Favorite.belongsTo(Recipe, { 
+  foreignKey: "recipeId",
+  as: "recipe"
+});
+
+console.log('✅ Models initialized with associations');
 
 export default sequelize;
